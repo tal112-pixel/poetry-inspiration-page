@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+    <meta charset="UTF-8"
+    <meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+    <title>Poetry inspiration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+            padding: 20px;
+        }
+        h1 {
+            color: #3c3c3c;
+            text-align: center;
+        }
+        .submission-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .submission-card {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .submission-card h3 {
+            color: #3c3c8a;
+            font-size: 1.5rem;
+        }
+        .submission-card p {
+            color: #555;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        .reaction-buttons {
+            margin-top: 1rem;
+        }
+        .reaction-buttons button {
+            margin: 0 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #f0f0f0;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .reaction-buttons button:hover {
+            background-color: #ddd;
+        }
+        .reaction-count {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: #888;
+        }
+        nav {
+            text-align: center;
+            margin: 20px 0;
+        }
+        nav a {
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #fff;
+            background-color: #3c3c8a;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        nav a:hover {
+            background-color: #5a5ac1;
+        }
+    </style>
+    </head>
+    <body>
+       
+        <header>
+            <h1>Poetry Inspiration</h1>
+        </header>
+
+        <div class="poem-container">
+            <!-- Poem 1 -->
+             <div class="poem" id="poem-1">
+                <h2>Whispers of the wind</h2>
+                <p>
+                    The wind carries tales untold,<br>
+                    Through valleys green and mountains bold</br>
+                    A soft caress, a fierce roar,<br>
+                    It speaks of lands unseen before
+                </p>
+                <div class="reaction-container">
+                    <button onclick="addReaction('like','poem-1')">👍Like(<span id="poem-1-like">0</span>)</button>
+                    <button onclick="addReaction('love','poem-1')">❤️Love(<span id="poem-1-love">0</span>)</button>
+                    <button onclick="addReaction('Wow','poem-1')">😲Wow(<span id="poem-1-wow">0</span>)</button>
+                </div>
+        </div>
+
+        <!-- Poem 2-->
+         <div class="poem" id="poem-2">
+         <h2>The Eternal flame</h2>
+            <p>
+                A fire burns within the soul,<br>
+                It lights the path, it makes us whole<br>
+                In darkest nights, it shines so bright,<br>
+                An eternal flame, our guiding light.
+
+         <div class="reaction-container">
+            <button onclick="addReaction('like','poem-2')">👍Like(<span id="poem-2-like">0</span>)</button>
+            <button onclick="addReaction('love','poem-2')">❤️Love(<span id="poem-2-love">0</span>)</button>
+            <button onclick="addReaction('Wow','poem-2')">😲Wow(<span id="poem-2-wow">0</span>)</button>
+             </div> 
+         </div> 
+
+         <script>
+           // Your Google Apps Script URL
+           const scriptURL = 
+           'https://script.google.com/macros/s/AKfycbwUs-n9VPM3pQGCrHYw9Non4mB5DQ41HNr76_tSr9LRnToAnJUuc2nZi6F9c2r2E8bF/exec';
+            
+           // Add reaction and send to Google Sheets
+           async function addReaction(poemId, reaction)
+           {
+            const data = { poemId, reaction };
+
+            try{
+                const response = await fetch(scriptURL,
+          {
+               method: 'POST',
+               headers: {
+                'Content-Type': 'application/json',
+               },
+               body: JSON.stringify(data), 
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                // Update count locally for immediate feedback
+                const countElement = 
+                document.getElementById(`${poemId}-${reaction}
+                `);
+                      countElement.textContent = 
+            parseInt(countElement.textContent) + 1;  
+            } else {
+                alert('Failed to record reaction!');
+            }
+           } catch (error) {
+            console.error('Error:', error);
+            alert('Error recording reaction!');
+           }
+        }
+
+        // Fetch reaction from Google Sheets and display them
+        async function fetchReactions() {
+            const sheetURL = 
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vQlM1oUheFHZRV_Rgq9XZUB2DJVXnpi49jv68r9jkPOQINO3bzwDwMfNAQb9OehDu5TnJmqO7IcNigw/pubhtml';
+            
+            try {
+                const response = await fetch(sheetURL);
+                const text = await response.text();
+
+                // Parse the CSV data
+                const rows = text.split('\n').map(row =>
+                    row.split(','));
+                    rows.slice(1).forEach(([poemId, like,
+                        love, wow]) => {
+                            if (poemId) {
+                                document.getElementById(`$
+     {poemId}-like`).textContent = like || 0;
+                  document.getElementById(`$
+     {poemId}-like`).textContent = love || 0;
+                  document.getElementById(`$
+     {poemId}-like`).textContent = wow || 0;
+                            }
+                            });
+                        } catch (error) {
+                            console.error('Error fetching reactions:', error);
+                           }
+                        }
+            fetchReactions();
+         </script>
+        </body>
+        </html>
+
+
+        
